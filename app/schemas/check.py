@@ -18,18 +18,6 @@ class IssueSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CheckResponse(BaseModel):
-    id: int
-    status: str
-    status_label: str
-    reason: str | None = None
-    issues: List[IssueSchema]
-    documents: List[DocumentSchema]
-    checked_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)
-
-
 class CheckListResponse(BaseModel):
     id: int
     created_at: datetime

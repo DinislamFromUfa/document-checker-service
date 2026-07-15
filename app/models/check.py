@@ -1,6 +1,9 @@
 from datetime import UTC, datetime
 import enum
 
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
+
 from sqlalchemy import (
     DateTime,
     Enum,
@@ -23,7 +26,9 @@ class CheckStatus(enum.Enum):
 class Check(Base):
     __tablename__ = "checks"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
 
     program: Mapped[str] = mapped_column(
         String(50),
@@ -68,11 +73,12 @@ class Check(Base):
 class Document(Base):
     __tablename__ = "documents"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
 
-    check_id: Mapped[int] = mapped_column(
-        ForeignKey("checks.id", ondelete="CASCADE"),
-        nullable=False,
+    check_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("checks.id", ondelete="CASCADE"), nullable=False
     )
 
     original_filename: Mapped[str] = mapped_column(
@@ -103,11 +109,12 @@ class Document(Base):
 class DocumentVersion(Base):
     __tablename__ = "document_versions"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
 
-    document_id: Mapped[int] = mapped_column(
-        ForeignKey("documents.id", ondelete="CASCADE"),
-        nullable=False,
+    document_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("documents.id", ondelete="CASCADE"), nullable=False
     )
 
     version_number: Mapped[int] = mapped_column(

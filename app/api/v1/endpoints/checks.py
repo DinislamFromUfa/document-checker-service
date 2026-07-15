@@ -1,3 +1,5 @@
+from typing import Literal
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -12,7 +14,6 @@ from app.api.dependencies import get_check_service
 from app.schemas.check import (
     CheckDetailResponse,
     CheckListResponse,
-    CheckResponse,
 )
 from app.services.check_service import CheckService
 
@@ -30,7 +31,7 @@ check_router = APIRouter(
 )
 async def create_check(
     files: list[UploadFile] = File(...),
-    program: str = Form(...),
+    program: Literal["federal", "regional"] = Form(...),
     service: CheckService = Depends(get_check_service),
 ):
     return await service.process_package(files, program)
@@ -51,9 +52,9 @@ async def get_checks(
     response_model=CheckDetailResponse,
 )
 async def get_check_detail(
-    check_id: int,
+    check_id: str,
     service: CheckService = Depends(get_check_service),
-):
+) -> CheckDetailResponse:
     check = await service.get_check_by_id(check_id)
 
     if check is None:

@@ -10,7 +10,7 @@ from app.models.check import (
     Document,
     DocumentVersion,
 )
-from app.schemas.check import CheckDetailResponse, CheckResponse, DocumentSchema, IssueSchema
+from app.schemas.check import CheckDetailResponse, DocumentSchema, IssueSchema
 from app.services.document_checker import DocumentChecker
 from app.services.file_storage import FileStorage
 
@@ -39,7 +39,7 @@ class CheckService:
         self,
         files: Sequence[UploadFile],
         program: str,
-    ) -> CheckResponse:
+    ):
         try:
             result_status, issues, documents = await (
                 self.document_checker.check(
