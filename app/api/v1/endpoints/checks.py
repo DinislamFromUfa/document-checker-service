@@ -25,7 +25,7 @@ check_router = APIRouter(
 
 @check_router.post(
     "",
-    response_model=CheckResponse,
+    response_model=CheckDetailResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_check(

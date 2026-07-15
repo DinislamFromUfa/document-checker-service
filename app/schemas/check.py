@@ -40,5 +40,23 @@ class CheckListResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CheckDetailResponse(CheckResponse):
-    pass
+class ExtractedDataSchema(BaseModel):
+    contractor: str
+    amount: str
+    date: str
+    subject: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CheckDetailResponse(BaseModel):
+    check_id: str
+    status: str
+    status_label: str
+    reason: str | None = None
+    issues: List[IssueSchema]
+    documents: List[DocumentSchema]
+    extracted: ExtractedDataSchema | None = None
+    checked_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
