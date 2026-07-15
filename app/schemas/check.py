@@ -1,22 +1,11 @@
 from datetime import datetime
-from enum import Enum
-from typing import List, Optional
-
-from pydantic import BaseModel, ConfigDict, Field
-
-
-class ProgramType(str, Enum):
-    FEDERAL = "federal"
-    REGIONAL = "regional"
-
-
-class CreateCheckRequest(BaseModel):
-    program: ProgramType = Field(..., description="Программа поддержки")
+from typing import List
+from pydantic import BaseModel, ConfigDict
 
 
 class DocumentSchema(BaseModel):
-    filename: str = Field(validation_alias="original_filename")
-    detected_type: Optional[str] = None
+    filename: str
+    detected_type: str | None = None
     size_kb: int
 
     model_config = ConfigDict(from_attributes=True)
@@ -26,12 +15,14 @@ class IssueSchema(BaseModel):
     level: str
     message: str
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class CheckResponse(BaseModel):
-    check_id: int = Field(validation_alias="id")
+    id: int
     status: str
     status_label: str
-    reason: Optional[str] = None
+    reason: str | None = None
     issues: List[IssueSchema]
     documents: List[DocumentSchema]
     checked_at: datetime
@@ -50,4 +41,4 @@ class CheckListResponse(BaseModel):
 
 
 class CheckDetailResponse(CheckResponse):
-    id: int
+    pass

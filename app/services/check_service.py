@@ -10,7 +10,7 @@ from app.models.check import (
     Document,
     DocumentVersion,
 )
-from app.schemas.check import CheckDetailResponse, CheckResponse, IssueSchema
+from app.schemas.check import CheckDetailResponse, CheckResponse, DocumentSchema, IssueSchema
 from app.services.document_checker import DocumentChecker
 from app.services.file_storage import FileStorage
 
@@ -91,8 +91,14 @@ class CheckService:
             status=check.status.value,
             status_label=STATUS_LABELS[check.status],
             reason=check.reason,
-            issues=[IssueSchema(**issue) for issue in check.issues],
-            documents=check.documents,
+            issues=[IssueSchema(level=i['level'], message=i['message']) for i in check.issues],
+            documents=[
+                DocumentSchema(
+                    filename=doc.original_filename,
+                    detected_type=doc.doc_type,
+                    size_kb=doc.size_kb
+                ) for doc in check.documents
+            ],
             checked_at=check.checked_at
         )
 
