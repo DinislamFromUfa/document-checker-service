@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -10,7 +12,7 @@ class CheckDAO(BaseDAO[Check]):
     def __init__(self, session: AsyncSession):
         super().__init__(session, Check)
 
-    async def get_by_id(self, obj_id: int) -> Check | None:
+    async def get_by_id(self, obj_id: uuid.UUID) -> Check | None:
         result = await self.session.execute(
             select(Check)
             .options(

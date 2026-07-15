@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List
+import uuid
 from pydantic import BaseModel, ConfigDict
 
 
@@ -19,7 +20,7 @@ class IssueSchema(BaseModel):
 
 
 class CheckListResponse(BaseModel):
-    id: int
+    id: uuid.UUID
     created_at: datetime
     program: str
     status: str
@@ -38,7 +39,7 @@ class ExtractedDataSchema(BaseModel):
 
 
 class CheckDetailResponse(BaseModel):
-    check_id: str
+    id: uuid.UUID
     status: str
     status_label: str
     reason: str | None = None

@@ -1,4 +1,5 @@
 from typing import Sequence
+import uuid
 
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -63,14 +64,26 @@ class CheckService:
             )
 
             await self.session.commit()
+            
+            check = await self.check_dao.get_by_id(check.id)
 
-            return CheckResponse(
-                check_id=check.id,
+            return CheckDetailResponse(
+                id=check.id,
                 status=check.status.value,
                 status_label=STATUS_LABELS[check.status],
                 reason=check.reason,
-                issues=issues,
-                documents=documents,
+                issues=[
+                    IssueSchema(**issue)
+                    for issue in check.issues
+                ],
+                documents=[
+                    DocumentSchema(
+                        filename=doc.original_filename,
+                        detected_type=doc.doc_type,
+                        size_kb=doc.size_kb,
+                    )
+                    for doc in check.documents
+                ],
                 checked_at=check.checked_at,
             )
 
@@ -81,7 +94,7 @@ class CheckService:
     async def get_all_checks(self):
         return await self.check_dao.get_all()
 
-    async def get_check_by_id(self, check_id: int) -> CheckDetailResponse | None:
+    async def get_check_by_id(self, check_id: uuid.UUID) -> CheckDetailResponse | None:
         check = await self.check_dao.get_by_id(check_id)
         if not check:
             return None
@@ -137,7 +150,7 @@ class CheckService:
 
     async def _save_documents(
         self,
-        check_id: int,
+        check_id: uuid.UUID,
         files: Sequence[UploadFile],
         documents,
     ) -> None:
